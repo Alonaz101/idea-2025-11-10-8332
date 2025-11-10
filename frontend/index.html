@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recipe Recommendation</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .recipe { margin-bottom: 10px; padding: 10px; border: 1px solid #ccc; }
+        .mood-selector { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Mood-based Recipe Recommendation</h1>
+    <div class="mood-selector">
+        <label for="mood">Select your mood:</label>
+        <select id="mood">
+            <option value="happy">😊 Happy</option>
+            <option value="sad">😔 Sad</option>
+            <option value="angry">😠 Angry</option>
+            <option value="relaxed">😌 Relaxed</option>
+        </select>
+        <button onclick="fetchRecipes()">Get Recipes</button>
+    </div>
+    <div id="recipes"></div>
+
+    <script>
+        async function fetchRecipes() {
+            const mood = document.getElementById('mood').value;
+            const response = await fetch('/mood', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mood })
+            });
+            const recipes = await response.json();
+            const recipesDiv = document.getElementById('recipes');
+            recipesDiv.innerHTML = '';
+            if (recipes.length === 0) {
+                recipesDiv.textContent = 'No recipes found for this mood.';
+                return;
+            }
+            recipes.forEach(recipe => {
+                const div = document.createElement('div');
+                div.className = 'recipe';
+                div.textContent = recipe.name;
+                recipesDiv.appendChild(div);
+            });
+        }
+    </script>
+</body>
+</html>
